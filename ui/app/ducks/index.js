@@ -5,8 +5,10 @@ import sendReducer from './send/send.duck'
 import appStateReducer from './app/app'
 import confirmTransactionReducer from './confirm-transaction/confirm-transaction.duck'
 import gasReducer from './gas/gas.duck'
+import accountSwitchAlerts from './account-switch-alerts/account-switch-alerts'
 
 export default combineReducers({
+  accountSwitchAlerts,
   activeTab: (s) => (s === undefined ? null : s),
   metamask: metamaskReducer,
   appState: appStateReducer,

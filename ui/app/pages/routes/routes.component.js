@@ -29,6 +29,7 @@ import { Modal } from '../../components/app/modals'
 import Alert from '../../components/ui/alert'
 import AppHeader from '../../components/app/app-header'
 import UnlockPage from '../unlock-page'
+import SwitchedToUnconnectedAccountAlert from '../../components/app/account-switch-alerts/switch-to-unconnected-account-alert'
 
 import {
   ADD_TOKEN_ROUTE,
@@ -77,6 +78,7 @@ export default class Routes extends Component {
     providerId: PropTypes.string,
     hasPermissionsRequests: PropTypes.bool,
     autoLockTimeLimit: PropTypes.number,
+    switchedToUnconnectedAccountAlertIsOpen: PropTypes.bool.isRequired,
   }
 
   static contextTypes = {
@@ -193,6 +195,7 @@ export default class Routes extends Component {
       sidebar,
       submittedPendingTransactions,
       isMouseUser,
+      switchedToUnconnectedAccountAlertIsOpen,
     } = this.props
     const isLoadingNetwork = network === 'loading'
     const loadMessage = (loadingMessage || isLoadingNetwork)
@@ -251,6 +254,12 @@ export default class Routes extends Component {
           { !isLoading && isLoadingNetwork && <LoadingNetwork /> }
           { this.renderRoutes() }
         </div>
+        {
+          switchedToUnconnectedAccountAlertIsOpen
+            ? <SwitchedToUnconnectedAccountAlert />
+            : null
+
+        }
       </div>
     )
   }

@@ -14,6 +14,11 @@ import { hasUnconfirmedTransactions } from '../helpers/utils/confirm-tx.util'
 import { setCustomGasLimit } from '../ducks/gas/gas.duck'
 import txHelper from '../../lib/tx-helper'
 import { getEnvironmentType } from '../../../app/scripts/lib/util'
+import {
+  getPermittedAccountsForCurrentTab,
+  getSelectedAddress,
+} from '../selectors/selectors'
+import { switchedToUnconnectedAccount } from '../ducks/account-switch-alerts/account-switch-alerts'
 
 export const actionConstants = {
   GO_HOME: 'GO_HOME',
@@ -1335,9 +1340,17 @@ export function setSelectedAddress (address) {
 }
 
 export function showAccountDetail (address) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     dispatch(showLoadingIndication())
     log.debug(`background.setSelectedAddress`)
+
+    const state = getState()
+    const selectedAddress = getSelectedAddress(state)
+    const permittedAccountsForCurrentTab = getPermittedAccountsForCurrentTab(state)
+    const currentTabIsConnectedToPreviousAddress = Boolean(permittedAccountsForCurrentTab?.[selectedAddress])
+    const currentTabIsConnectedToNextAddress = Boolean(permittedAccountsForCurrentTab?.[address])
+    const switchingToUnconnectedAddress = currentTabIsConnectedToPreviousAddress && !currentTabIsConnectedToNextAddress
+
     background.setSelectedAddress(address, (err, tokens) => {
       dispatch(hideLoadingIndication())
       if (err) {
@@ -1349,6 +1362,9 @@ export function showAccountDetail (address) {
         type: actionConstants.SHOW_ACCOUNT_DETAIL,
         value: address,
       })
+      if (switchingToUnconnectedAddress) {
+        switchedToUnconnectedAccount()
+      }
       dispatch(setSelectedToken())
     })
   }

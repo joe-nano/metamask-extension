@@ -15,6 +15,10 @@ import {
   setLastActiveTime,
   setMouseUserState,
 } from '../../store/actions'
+import {
+  dismissedSwitchedToUnconnectedAccountAlert,
+  switchedToUnconnectedAccountAlertIsOpen,
+} from '../../ducks/account-switch-alerts/account-switch-alerts'
 
 function mapStateToProps (state) {
   const { appState } = state
@@ -44,6 +48,7 @@ function mapStateToProps (state) {
     providerId: getNetworkIdentifier(state),
     autoLockTimeLimit,
     hasPermissionsRequests: hasPermissionRequests(state),
+    switchedToUnconnectedAccountAlertIsOpen: switchedToUnconnectedAccountAlertIsOpen(state),
   }
 }
 
